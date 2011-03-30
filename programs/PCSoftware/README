@@ -1,0 +1,20 @@
+Instructions
+
+Run 1 of each of
+
+Webvirtualcontrollers.py
+RegisterController.py
+basiclessoncontroller.py
+
+Navigate to
+
+localhost:9001/randomid/webbuzzer.html
+"ditto"/webteacher.html (unimplemented)
+"ditto"/webdisplay.html (unimplemented)
+
+Randomid sets the virtual id of the device, so you can pretend to be more than one buzzer
+
+Then:
+
+Press buttons!
+Rewrite crappy bits
