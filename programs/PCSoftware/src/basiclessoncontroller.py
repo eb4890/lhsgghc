@@ -14,7 +14,9 @@ class LessonController():
   def studentmapping(self, args):
     assoc = gl.Association(string = args)
     self.idtostudentmap[assoc.key] = assoc.value
-  
+    #gl.broadcast("messagetobutton", "id:%s:arg:1" % assoc.key , 50001)
+    #When a student mapping is made we need to turn off a light 
+
   def startlesson(self, args):
     self.lessonstarted = True
     print "Changing eventmap"

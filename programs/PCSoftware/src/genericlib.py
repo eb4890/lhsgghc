@@ -1,6 +1,6 @@
 import socket
 import select
-
+import struct
 
 
 #from calendar import calendar
@@ -15,6 +15,8 @@ updatedisplay
 
 onfeedback
 '''
+MCAST_GRP = '224.1.1.1'
+
 class Association():
   def __init__(self, key=None, value=None, string=""):
     if key != None and value != None: 
@@ -39,9 +41,12 @@ class ButtonPress ():
        self.button = dictionary[button]
 
 def listen(controller, port):
-  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
   s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-  s.bind(('<broadcast>', port))
+  s.bind(('', port))
+  
+  mreq =  struct.pack("4sl", socket.inet_aton(MCAST_GRP), socket.INADDR_ANY)
+  s.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
   s.setblocking(0)
   while True:
     try:
@@ -62,12 +67,13 @@ def broadcast(event, args, port):
     try:
         print "Broadcasting %s to network with args %s" % (event, args)
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.bind(('', 0))
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
+        #s.bind(('', 0))
+        #s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
         data = "%s\n%s" % (event, args)
-        s.sendto(data, ('<broadcast>', port))
+        s.sendto(data, (MCAST_GRP, port))
 
     except Exception, e:
         pass
