@@ -2,9 +2,10 @@ Instructions
 
 Run 1 of each of
 
-Webvirtualcontrollers.py
-RegisterController.py
-basiclessoncontroller.py
+python Webvirtualcontrollers.py
+python RegisterController.py
+python basiclessoncontroller.py
+*Work in progress* twistd -noy twistedserver.py
 
 Navigate to
 
