@@ -1,12 +1,24 @@
 <html>
 <head>
 <script type="text/javascript" src ="jquery.js"></script>
+
+<script type ="text/javascript">
+
+function gotComet(data, textStatus, jqXHR)
+{
+  alert(data);
+  $.get("comet","", gotComet, "json");
+}
+
+
+$.get("comet","", gotComet, "text");
+</script>
 </head>
 <body>
 
-<a href="#" onclick="jQuery.ajax('button/1/')">1</a>
-<a href="#" onclick="jQuery.ajax('button/2/')">2</a>
-<a href="#" onclick="jQuery.ajax('button/3/')">3</a>
-<a href="#" onclick="jQuery.ajax('button/4/')">4</a>
+<a href="#" onclick="jQuery.ajax('button1')">1</a>
+<a href="#" onclick="jQuery.ajax('button2')">2</a>
+<a href="#" onclick="jQuery.ajax('button3')">3</a>
+<a href="#" onclick="jQuery.ajax('button4')">4</a>
 </body>
 </html>

@@ -17,6 +17,17 @@ onfeedback
 '''
 MCAST_GRP = '224.1.1.1'
 
+class Message():
+  def __init__(self, devid, event):
+    self.devid = devid
+    self.event = event
+
+def parseMessage(event, data):
+  m =  Message( ButtonPress(data).buzzerid, data)
+  
+  return m
+
+
 class Association():
   def __init__(self, key=None, value=None, string=""):
     if key != None and value != None: 
