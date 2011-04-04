@@ -13,6 +13,15 @@ def updateComet(request, message):
    request.write("{data: '%s'}" % message.event)
    request.finish()
 
+class templateResource(resource.Resource):
+  
+  def __init__(self, templateName, datafunc):
+    resource.Resource.__init__(self)
+    self.getData = datafunc
+    self.templateName = templateName
+    self.imported = __import__(templateName)    
+  def render_GET(self, request):
+    
 class multicastProtocol(protocol.DatagramProtocol):
   
  

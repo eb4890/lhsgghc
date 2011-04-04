@@ -1,0 +1,26 @@
+<html>
+<head>
+<script type="text/javascript" src ="jquery.js"></script>
+<script type="text/javascript" src ="site.js"></script> 
+
+
+
+</script>
+</head>
+<body>
+
+<a href="#" onclick="jQuery.ajax('nextquestion')">Next Question</a> <br/>
+<a href="#" onclick="jQuery.ajax('startlesson')">Start Lesson</a>
+
+<select id="lesson">
+
+#for $lesson in $lessons
+
+<option value="$lesson"> $lesson</option>
+
+#end for
+</select>
+<a href="#" onclick="jQuery.ajax('setlesson')">Set lesson</a>
+<a href="#" onclick="jQuery.ajax('button/4/')">4</a>
+</body>
+</html>
