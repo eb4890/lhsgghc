@@ -5,7 +5,7 @@ from twisted.web import static, resource, server as webserver
 
 import struct
 import genericlib as gl
-
+import webteacher
 
 multicastgroup = "224.0.0.1"
 
@@ -13,7 +13,19 @@ def updateComet(request, message):
    request.write("{data: '%s'}" % message.event)
    request.finish()
 
-class templateResource(resource.Resource):
+def getlessonlist():
+  return ["fred", "bob"] 
+  
+class TeacherResource (resource.Resource):
+  def __init__(self, datafunc):
+    resource.Resource.__init__(self)
+    self.datafunc = datafunc
+  def render_GET(self, request):
+    wt = webteacher.webteacher()
+    wt.lessons = self.datafunc()
+    return str(wt)
+  
+class TemplateResource(resource.Resource):
   
   def __init__(self, templateName, datafunc):
     resource.Resource.__init__(self)
@@ -21,7 +33,14 @@ class templateResource(resource.Resource):
     self.templateName = templateName
     self.imported = __import__(templateName)    
   def render_GET(self, request):
-    
+    data = self.getData()
+    template = self.imported[self.templateName]
+    print data
+    for (k,v) in data.items():
+      template.__setattr__(k,v)
+    return str(template)
+
+
 class multicastProtocol(protocol.DatagramProtocol):
   
  
@@ -57,16 +76,32 @@ class Button(resource.Resource):
     gl.broadcast("rawbuttonpress", "%s:%s:%s" % (self.buttonname,self.devid, "now" ),50000)
     return """"""
 
+class StringResource(resource.Resource):
+  def __init__(self, string):
+    resource.Resource.__init__(self)
+    self.string = string
+  def render_GET(self, request):
+    return self.string
+class LessonResource(resource.Resource):
+  def __init__(self):
+    resource.Resource.__init__(self)
+  
+  def getChild(self, name, request):
+    gl.broadcast("lesson",name, 50000)
+    return StringResource("")
 class IDBuzzerMessage(resource.Resource):
   def __init__(self,mainhandler, devid):
     resource.Resource.__init__(self)
     #self.service = service
     self.devid = devid
-    self.putChild("jquery.js", static.File("jquery.js"))
     self.putChild("webbuzzer", static.File("webbuzzer.html"))
+    self.putChild("jquery.js", static.File("jquery.js"))
+    self.putChild("site.js", static.File("site.js"))
     self.putChild("webteacher", static.File("webteacher.html"))
+    self.putChild("lesson", LessonResource())
+    self.putChild("webteacher", TeacherResource( getlessonlist))
     csh = CometSetupHandler(mainhandler, devid)
-    buttons = ["button1", "button2", "button3", "button4","teachernext"]
+    buttons = ["button1", "button2", "button3", "button4","teachernext","startlesson"]
     for button in buttons:
       self.putChild(button, Button(button,devid))
     self.putChild("comet", csh)
