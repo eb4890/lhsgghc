@@ -31,7 +31,7 @@ class SerialController(MessageListener):
     print 'Serial error!'
 
   def sock_read(self):
-    msg = readers[0][0].recv(1024)
+    msg = self.multisock.recv(1024)
     print 'Recv: %s' % repr(msg)
     self.handle_msg(msg)
 
@@ -39,14 +39,14 @@ class SerialController(MessageListener):
 
   def ready_handlers(self):
     readers = {
-      self.serial: serial_read,
-      self.multisocket: sock_read,
+      self.serial: self.serial_read,
+      self.multisocket: self.sock_read,
     }
     writers = {
-      self.serial: serial_write,
+      self.serial: self.serial_write,
     }
     errors = {
-      self.serial: serial_error,
+      self.serial: self.serial_error,
     }
     return readers, writers, errors
 
