@@ -19,7 +19,7 @@ class LessonController():
     print "Changing eventmap"
     self.eventmap["rawbuttonpress"] = self.livebuttonpress
 
-  def startregister(self):
+  def startregistration(self):
     self.registrationstarted = True
     ev = { 'event': 'startregistration' }
     messages.send(ev, 50001)
@@ -31,7 +31,7 @@ class LessonController():
       messages.send(args, 50001)
     elif args["button"] == "startregistration":
       print "Start registration"
-      self.startregister()
+      self.startregistration()
     elif args["button"] == "restart":
       ev = {'event': 'restart'}
       messages.send(ev, 50001)
@@ -58,7 +58,7 @@ class LessonController():
     self.eventmap = {
                      "rawbuttonpress": self.presetupbuttonpress,
                      "startlesson": self.startlesson,
-                     "startregister": self.startregister,
+                     "startregistration": self.startregistration,
                      "studentmapping": self.studentmapping
                     }
 
