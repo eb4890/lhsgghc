@@ -1,14 +1,14 @@
-import re 
+import re
 
 possibleanswerdemarcators = "[a-zA-Z0-9]*[\]\)\}\.\:]"
 
 re.DOTALL = True
 
-#This is a monadic style bit of code. But what to be done. 
+#This is a monadic style bit of code. But what to be done.
 
 numbering = "\(?(\d+|i+|I+|[A-Z])([\.\)\:\,])"
 
-# - dashes 
+# - dashes
 
 
 def parsetitle(text):
@@ -17,8 +17,8 @@ def parsetitle(text):
     if re.match("^(\w)*(Q|%s)" % numbering ,l):
       print "Matched %s" %l
   #matches =  re.match("([^Q.])*Q", text)
-  #print matches.group(0)  
-  return 
+  #print matches.group(0)
+  return
 
 def parseanswer(text):
 
@@ -29,10 +29,10 @@ def parsequestion(text):
 
 def parsequestiontotal(text):
   return
-  
+
 
 def parselesson(text):
-  
+
   (title,rest) = parsetitle (text)
   questions = []
   while (rest!=""):
@@ -42,4 +42,4 @@ def parselesson(text):
   return {"title": title, "questions": question}
 
 
-parsetitle("asasjlaj\nIII.dladj\n\\nasad\nQ\n1)\n|n\n(\)") 
+parsetitle("asasjlaj\nIII.dladj\n\\nasad\nQ\n1)\n|n\n(\)")

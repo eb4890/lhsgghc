@@ -14,8 +14,8 @@ def updateComet(request, message):
    request.finish()
 
 def getlessonlist():
-  return ["fred", "bob"] 
-  
+  return ["fred", "bob"]
+
 class TeacherResource (resource.Resource):
   def __init__(self, datafunc):
     resource.Resource.__init__(self)
@@ -24,14 +24,14 @@ class TeacherResource (resource.Resource):
     wt = webteacher.webteacher()
     wt.lessons = self.datafunc()
     return str(wt)
-  
+
 class TemplateResource(resource.Resource):
-  
+
   def __init__(self, templateName, datafunc):
     resource.Resource.__init__(self)
     self.getData = datafunc
     self.templateName = templateName
-    self.imported = __import__(templateName)    
+    self.imported = __import__(templateName)
   def render_GET(self, request):
     data = self.getData()
     template = self.imported[self.templateName]
@@ -42,8 +42,7 @@ class TemplateResource(resource.Resource):
 
 
 class multicastProtocol(protocol.DatagramProtocol):
-  
- 
+
   def startProtocol(self):
     self.transport.joinGroup(multicastgroup)
     #self.transport.connect(self.service.multicastHost,self.service.multicastPort)
@@ -52,7 +51,7 @@ class multicastProtocol(protocol.DatagramProtocol):
     return
   def datagramReceived(self,datagram,addr):
     try:
-      
+
       #print datagram
       jsondata = json.loads(datagram.decode("UTF-16"))
       #event, ata = datagram.split("\n")
@@ -66,14 +65,14 @@ class multicastProtocol(protocol.DatagramProtocol):
  # def sendMessage(self,message):
   # self.transport.write(message)
 
-#class 
+#class
 
 class Button(resource.Resource):
   def __init__(self, event, devid):
     resource.Resource.__init__(self)
     self.buttonname = event
     self.devid = devid
-  
+
   def render_GET(self, request):
     print "In Button"
     gl.broadcast("""{"event":"rawbuttonpress", "rawtime": "%s" , "devid": "%s", "button": "%s"}""" % ("now",self.devid,self.buttonname ),50000)
@@ -88,10 +87,11 @@ class StringResource(resource.Resource):
 class LessonResource(resource.Resource):
   def __init__(self):
     resource.Resource.__init__(self)
-  
+
   def getChild(self, name, request):
     gl.broadcast("""{"event":"picklesson", "lessonname": "%s"}""" % name, 50000)
     return StringResource("")
+
 class IDBuzzerMessage(resource.Resource):
   def __init__(self,mainhandler, devid):
     resource.Resource.__init__(self)
@@ -109,8 +109,6 @@ class IDBuzzerMessage(resource.Resource):
     for button in buttons:
       self.putChild(button, Button(button,devid))
     self.putChild("comet", csh)
-      
-    
 
   def render_GET(self, request):
     return """<html><head></head><body><div>Information about device ID X goes here</div></body></html>"""
@@ -125,21 +123,19 @@ class CometSetupHandler(resource.Resource):
     self.mainhandler.appendCometId(request, self.devid)
     #todo add in some way to deal with requests cancelled by the server
     return webserver.NOT_DONE_YET
-   
+
 class MainBuzzerHandler(resource.Resource):
   def __init__(self,service):
     resource.Resource.__init__(self)
     self.service=service
     self.putChild("",self)
-    self.idCometRequests = {} 
+    self.idCometRequests = {}
 
 
   def getChildWithDefault(self,devid,request):
     #name.split("/")
-    
+
     print devid
-    
-    
     return IDBuzzerMessage(self, devid)
 
   def sendCometMessage(self, message):
@@ -149,7 +145,7 @@ class MainBuzzerHandler(resource.Resource):
     for r in self.idCometRequests:
       print r
     if message["devid"] in self.idCometRequests:
-      
+
       requests = self.idCometRequests[message["devid"]]
       for r in requests:
         print "Updating"
