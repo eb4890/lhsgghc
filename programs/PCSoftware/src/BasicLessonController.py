@@ -3,9 +3,24 @@ import messages
 import json
 
 
-class LessonController():
-  def __init__(self):
+class LessonController(MessageListener):
+  def __init__(self, port):
+    MessageListener.__init__(self, port)
     self.restart()
+
+  def restart(self):
+    self.lesson = ""
+    self.lessonstarted = False
+    self.handsets = []
+    self.idtostudentmap = {"11":"Jimmy"}
+
+    self.controller = {
+      'rawbuttonpress': self.presetupbuttonpress,
+      'startlesson': self.startlesson,
+      'startregistration': self.startregistration,
+      'studentmapping': self.studentmapping
+    }
+
   def studentmapping(self, args):
     try:
       self.idtostudentmap[args["devid"]] = args["student"]
@@ -17,7 +32,7 @@ class LessonController():
   def startlesson(self, args):
     self.lessonstarted = True
     print "Changing eventmap"
-    self.eventmap["rawbuttonpress"] = self.livebuttonpress
+    self.controller["rawbuttonpress"] = self.livebuttonpress
 
   def startregistration(self):
     self.registrationstarted = True
@@ -50,18 +65,6 @@ class LessonController():
     }
     messages.send(ev, 50001)
 
-  def restart(self):
-    self.lesson = ""
-    self.lessonstarted = False
-    self.handsets = []
-    self.idtostudentmap = {"11":"Jimmy"}
-    self.eventmap = {
-                     "rawbuttonpress": self.presetupbuttonpress,
-                     "startlesson": self.startlesson,
-                     "startregistration": self.startregistration,
-                     "studentmapping": self.studentmapping
-                    }
-
-lc = LessonController()
-
-network.listen(lc.eventmap, 50000)
+if __name__ == '__main__':
+  lc = LessonController(50000)
+  lc.run()

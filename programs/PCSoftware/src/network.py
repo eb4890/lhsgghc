@@ -6,7 +6,7 @@ import json
 MCAST_GRP = '224.1.1.1'
 
 
-def listen(controller, port):
+def multisocket(port):
   s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
   s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
   s.bind(('', port))
@@ -15,20 +15,43 @@ def listen(controller, port):
   s.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
   s.setblocking(0)
 
-  while True:
+  return s
+
+class MessageListener():
+
+  def __init__(self, port):
+    self.port = port
+    self.controller = {}
+    self.multisocket = multisocket(self.port)
+
+  def handle_msg(self, msg):
+    event = json.loads(msg.decode('UTF-8'))
+    print 'Received event: %s' % repr(event)
+
     try:
-      result = select.select([s],[],[])
-      payload = result[0][0].recv(1024)
-      print 'Recv: %s' % repr(payload)
+      handler = controller[event['event']]
+    except KeyError, e:
+      print 'Unknown event %s' % repr(event['event'])
+      return
 
-      event = json.loads(payload.decode('UTF-8'))
-      print 'Received event: %s' % repr(event)
-
-      if event['event'] in controller:
-        controller[event['event']](event)
-
+    try:
+      handler(event)
     except Exception, e:
-      print 'Exception receiving: %s' % repr(e)
+      print 'Exception handling %s: %s' % (event['event'], repr(e))
+
+  def run():
+    while True:
+      try:
+        socks = [self.multisocket]
+        readers, writers, errors = select.select(socks, [], [])
+        msg = readers[0][0].recv(1024)
+        print 'Recv: %s' % repr(msg)
+
+      except Exception, e:
+        print 'Exception receiving: %s' % repr(e)
+
+      self.handle_msg(msg)
+
 
 def broadcast(msg, port):
 

@@ -2,25 +2,28 @@ import messages
 import network
 import lessonparser as lp
 
-class RosterController():
-  def __init__(self, filename= ""):
-    self.restart(None)
-    if filename != "":
-      self.loadrosterfile (filename)
+class RosterController(MessageListener):
+  def __init__(self, filename='', port):
+    MessageListener.__init__(self, port)
 
-  def restart(self,args):
+    self.restart()
+    if filename != '':
+      self.loadrosterfile(filename)
+
+  def restart(self, args=None):
     print "(Re)starting"
     self.started = False
     self.rosterpos = 0
     self.finished = False
     self.rosterlist = []
     self.rostermap = {}
-    self.eventmap= { "startregistration" : self.startregistration,
-                  "rawbuttonpress": self.associate,
-                  "unregisterlast": self.unregisterlast,
-                  "rosterfile": self.rosterfile,
-                  "restart": self.restart
-                  }
+    self.controller = {
+      'startregistration' : self.startregistration,
+      'rawbuttonpress': self.associate,
+      'unregisterlast': self.unregisterlast,
+      'rosterfile': self.rosterfile,
+      'restart': self.restart,
+    }
 
   def associate(self,args):
     print "In associate"
@@ -69,6 +72,8 @@ class LessonReader():
   def __setup__():
     pass
 
-rosterfilename = "reg.txt"
-rc = RosterController(rosterfilename)
-network.listen(rc.eventmap, 50001)
+
+if __name__ == '__main__':
+  rosterfilename = 'reg.txt'
+  rc = RosterController(rosterfilename, 50001)
+  rc.run()
