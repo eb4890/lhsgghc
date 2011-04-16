@@ -1,22 +1,22 @@
 import re
 
-possibleanswerdemarcators = "[a-zA-Z0-9]*[\]\)\}\.\:]"
+possibleanswerdemarcators = '[a-zA-Z0-9]*[\]\)\}\.\:]'
 
 re.DOTALL = True
 
 #This is a monadic style bit of code. But what to be done.
 
-numbering = "\(?(\d+|i+|I+|[A-Z])([\.\)\:\,])"
+numbering = r'\(?(\d+|i+|I+|[A-Z])([\.\)\:\,])'
 
 # - dashes
 
 
 def parsetitle(text):
-  lines = text.split("\n")
+  lines = text.split('\n')
   for l in lines:
-    if re.match("^(\w)*(Q|%s)" % numbering ,l):
-      print "Matched %s" %l
-  #matches =  re.match("([^Q.])*Q", text)
+    if re.match(r'^(\w)*(Q|%s)' % numbering ,l):
+      print 'Matched %s' %l
+  #matches =  re.match('([^Q.])*Q', text)
   #print matches.group(0)
   return
 
@@ -35,11 +35,11 @@ def parselesson(text):
 
   (title,rest) = parsetitle (text)
   questions = []
-  while (rest!=""):
+  while (rest!=''):
     rest, question = parsequestiontotal(rest)
     questions.append (question)
 
-  return {"title": title, "questions": question}
+  return {'title': title, 'questions': question}
 
 
-parsetitle("asasjlaj\nIII.dladj\n\\nasad\nQ\n1)\n|n\n(\)")
+parsetitle('asasjlaj\nIII.dladj\n\\nasad\nQ\n1)\n|n\n(\)')
