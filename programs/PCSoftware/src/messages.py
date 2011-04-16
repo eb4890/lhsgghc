@@ -18,8 +18,8 @@ class Message():
     self.devid = devid
     self.event = event
 
-def parse(event, data):
-  m = Message(ButtonPress(data).buzzerid, data)
+def parse(event):
+  m = Message(ButtonPress(event).buzzerid, event)
   return m
 
 def send(event, port):
