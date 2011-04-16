@@ -1,0 +1,23 @@
+1) Make lessons 
+
+2) Make Viewer
+
+3) Make JSON versions of all the messages
+
+rawbuttonpress
+{"event": "rawbuttonpress": ""rawtime": 1111, "devid": sfada, "button":   }
+
+association
+{"event":"association", "devid": sfasda, "studentname": }
+
+processbuttonpress
+{"time": ,"student":, "button" }
+
+setlight
+{"devid":}
+
+lessontext
+{"question":"asas" , "answers":["asas","asasa","aasasf"], "correct":"buttonX"}
+
+{"event":"picklesson" , "lesson" : "text"}
+
