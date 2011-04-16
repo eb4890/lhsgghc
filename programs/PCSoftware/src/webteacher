@@ -8,9 +8,10 @@
 </script>
 </head>
 <body>
-
-<a href="#" onclick="jQuery.ajax('nextquestion')">Next Question</a> <br/>
-<a href="#" onclick="jQuery.ajax('startlesson')">Start Lesson</a>
+<a href="#" onclick="jQuery.ajax('startregistration')">Start registration </a>
+<a href="#" onclick="jQuery.ajax('teachernext')">Next Question</a> <br/>
+<a href="#" onclick= "jQuery.ajax('restart')"> Restart </a><br/>
+<a href="#" onclick="setlesson()">Start Lesson</a>
 
 <select id="lesson">
 

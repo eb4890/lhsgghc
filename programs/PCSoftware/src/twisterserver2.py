@@ -5,27 +5,19 @@ from twisted.web import static, resource, server as webserver
 
 import struct
 import genericlib as gl
-import webteacher
-import json
+
+
 multicastgroup = "224.0.0.1"
 
 def updateComet(request, message):
-   request.write(json.dumps(message))
+   request.write("{data: '%s'}" % message.event)
    request.finish()
 
 def getlessonlist():
-  return ["fred", "bob"] 
+  if 
   
-class TeacherResource (resource.Resource):
-  def __init__(self, datafunc):
-    resource.Resource.__init__(self)
-    self.datafunc = datafunc
-  def render_GET(self, request):
-    wt = webteacher.webteacher()
-    wt.lessons = self.datafunc()
-    return str(wt)
-  
-class TemplateResource(resource.Resource):
+
+class templateResource(resource.Resource):
   
   def __init__(self, templateName, datafunc):
     resource.Resource.__init__(self)
@@ -34,11 +26,9 @@ class TemplateResource(resource.Resource):
     self.imported = __import__(templateName)    
   def render_GET(self, request):
     data = self.getData()
-    template = self.imported[self.templateName]
-    print data
-    for (k,v) in data.items():
-      template.__setattr__(k,v)
-    return str(template)
+    for (k,v) in data:
+      self.imported.__setattr__(k,v)
+    return str(self.imported)
 
 
 class multicastProtocol(protocol.DatagramProtocol):
@@ -52,14 +42,11 @@ class multicastProtocol(protocol.DatagramProtocol):
     return
   def datagramReceived(self,datagram,addr):
     try:
-      
-      #print datagram
-      jsondata = json.loads(datagram.decode("UTF-16"))
-      #event, ata = datagram.split("\n")
-      #message = gl.parseMessage(jsondata["event"], jsondata)
-      if jsondata["event"] in ["setlight", "soundbuzzer"] :
-        self.mainHandler.sendCometMessage(jsondata)
-      print "Found %s %s " % (jsondata["event"] , datagram.decode("UTF-16"))
+      print datagram
+      event, data = datagram.split("\n")
+      message = gl.parseMessage(event, data)
+      self.mainHandler.sendCometMessage(message)
+      print "Found" + event + data
     except Exception as err:
       log.err()
       return
@@ -76,36 +63,19 @@ class Button(resource.Resource):
   
   def render_GET(self, request):
     print "In Button"
-    gl.broadcast("""{"event":"rawbuttonpress", "rawtime": "%s" , "devid": "%s", "button": "%s"}""" % ("now",self.devid,self.buttonname ),50000)
+    gl.broadcast("rawbuttonpress", "%s:%s:%s" % (self.buttonname,self.devid, "now" ),50000)
     return """"""
 
-class StringResource(resource.Resource):
-  def __init__(self, string):
-    resource.Resource.__init__(self)
-    self.string = string
-  def render_GET(self, request):
-    return self.string
-class LessonResource(resource.Resource):
-  def __init__(self):
-    resource.Resource.__init__(self)
-  
-  def getChild(self, name, request):
-    gl.broadcast("""{"event":"picklesson", "lessonname": "%s"}""" % name, 50000)
-    return StringResource("")
 class IDBuzzerMessage(resource.Resource):
   def __init__(self,mainhandler, devid):
     resource.Resource.__init__(self)
     #self.service = service
     self.devid = devid
-    self.putChild("webbuzzer", static.File("webbuzzer.html"))
     self.putChild("jquery.js", static.File("jquery.js"))
-    self.putChild("site.js", static.File("site.js"))
-    #self.putChild("webteacher", static.File("webteacher.html"))
-    self.putChild("webdisplay", static.File("webdisplay.html"))
-    self.putChild("lesson", LessonResource())
-    self.putChild("webteacher", TeacherResource( getlessonlist))
+    self.putChild("webbuzzer", static.File("webbuzzer.html"))
+    self.putChild("webteacher", static.File("webteacher.html"))
     csh = CometSetupHandler(mainhandler, devid)
-    buttons = ["button1", "button2", "button3", "button4","teachernext","startlesson", "startregistration", "restart"]
+    buttons = ["button1", "button2", "button3", "button4","teachernext"]
     for button in buttons:
       self.putChild(button, Button(button,devid))
     self.putChild("comet", csh)
@@ -123,7 +93,6 @@ class CometSetupHandler(resource.Resource):
 
   def render_GET(self, request):
     self.mainhandler.appendCometId(request, self.devid)
-    #todo add in some way to deal with requests cancelled by the server
     return webserver.NOT_DONE_YET
    
 class MainBuzzerHandler(resource.Resource):
@@ -145,16 +114,13 @@ class MainBuzzerHandler(resource.Resource):
   def sendCometMessage(self, message):
     print "Sending Comet Messages"
     print len (self.idCometRequests)
-    print message["devid"]
-    for r in self.idCometRequests:
-      print r
-    if message["devid"] in self.idCometRequests:
+    if message.devid in self.idCometRequests:
       
-      requests = self.idCometRequests[message["devid"]]
+      requests = self.idCometRequests[message.devid]
       for r in requests:
         print "Updating"
         updateComet(r,message)
-      self.idCometRequests[message["devid"]] = []
+
 
   def appendCometId(self,request, devid):
     if not (devid in self.idCometRequests):

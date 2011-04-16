@@ -8,8 +8,8 @@ function gotComet(data, textStatus, jqXHR)
 {
    
    var da = eval("(" + data + ")");
-  
-  alert(da.value);
+  $("body").val("Hi")
+  alert(data);
   $.get("comet","", gotComet, "text");
 }
 
@@ -19,9 +19,6 @@ $.get("comet","", gotComet, "text");
 </head>
 <body>
 
-<a href="#" onclick="jQuery.ajax('button1')">1</a>
-<a href="#" onclick="jQuery.ajax('button2')">2</a>
-<a href="#" onclick="jQuery.ajax('button3')">3</a>
-<a href="#" onclick="jQuery.ajax('button4')">4</a>
+Lesson not started
 </body>
 </html>
