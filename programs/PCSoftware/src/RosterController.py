@@ -1,4 +1,3 @@
-import genericlib as gl
 import lessonparser as lp
 
 class RosterController():
@@ -23,7 +22,6 @@ class RosterController():
 
   def associate(self,args):
     print "In associate"
-    #bp = gl.ButtonPress(args)
 
     print "after bp"
     try:
@@ -31,14 +29,21 @@ class RosterController():
 
         currentstudent = self.rosterlist[self.rosterpos]
         self.rostermap [args["devid"]] = currentstudent
-        gl.broadcast("""{"event": "studentmapping", "devid":"%s" , "student": "%s" }""" % (args["devid"], currentstudent),50000)
+        ev = {
+          'event':   'studentmapping',
+          'devid':   args["devid"],
+          'student': currentstudent,
+        }
+        network.broadcast(ev, 50000)
         self.rosterpos +=1
-        if self.rosterpos >= len (self.rosterlist):
+        if self.rosterpos >= len(self.rosterlist):
           self.finished = True
           self.rosterpos = len(self.rosterlist)
-      print "Finished registration"
+
+        print "Finished registration"
       else:
         print "%s already in rostermap" % args["devid"]
+
     except Exception, e:
       print rosterpos
       print "Malformed button event"
@@ -49,6 +54,7 @@ class RosterController():
 
   def rosterfile (self, args):
     self.loadrosterfile (args)
+
   def loadrosterfile(self, filename):
     f = open(filename, "r")
     for line in f:
@@ -63,4 +69,4 @@ class LessonReader():
 
 rosterfilename = "reg.txt"
 rc = RosterController(rosterfilename)
-gl.listen(rc.eventmap, 50001)
+network.listen(rc.eventmap, 50001)

@@ -4,7 +4,6 @@ from twisted.python import log
 from twisted.web import static, resource, server as webserver
 
 import struct
-import genericlib as gl
 import webteacher
 import json
 multicastgroup = "224.0.0.1"
@@ -55,7 +54,7 @@ class multicastProtocol(protocol.DatagramProtocol):
       #print datagram
       jsondata = json.loads(datagram.decode("UTF-16"))
       #event, ata = datagram.split("\n")
-      #message = gl.parseMessage(jsondata["event"], jsondata)
+      #message = messages.parseMessage(jsondata["event"], jsondata)
       if jsondata["event"] in ["setlight", "soundbuzzer"] :
         self.mainHandler.sendCometMessage(jsondata)
       print "Found %s %s " % (jsondata["event"] , datagram.decode("UTF-16"))
@@ -75,8 +74,14 @@ class Button(resource.Resource):
 
   def render_GET(self, request):
     print "In Button"
-    gl.broadcast("""{"event":"rawbuttonpress", "rawtime": "%s" , "devid": "%s", "button": "%s"}""" % ("now",self.devid,self.buttonname ),50000)
-    return """"""
+    ev = {
+      'event':   'rawbuttonpress',
+      'rawtime': 'now',
+      'devid':   self.devid,
+      'button':  self.buttonname,
+    }
+    network.broadcast(ev, 50000)
+    return ''
 
 class StringResource(resource.Resource):
   def __init__(self, string):
@@ -84,12 +89,17 @@ class StringResource(resource.Resource):
     self.string = string
   def render_GET(self, request):
     return self.string
+
 class LessonResource(resource.Resource):
   def __init__(self):
     resource.Resource.__init__(self)
 
   def getChild(self, name, request):
-    gl.broadcast("""{"event":"picklesson", "lessonname": "%s"}""" % name, 50000)
+    ev = {
+      'event': 'picklesson',
+      'lessonname': name,
+    }
+    network.broadcast(ev, 50000)
     return StringResource("")
 
 class IDBuzzerMessage(resource.Resource):
