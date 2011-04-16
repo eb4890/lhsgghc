@@ -1,6 +1,6 @@
 import re
 
-possibleanswerdemarcators = '[a-zA-Z0-9]*[\]\)\}\.\:]'
+possibleanswerdemarcators = r'[a-zA-Z0-9]*[\]\)\}\.\:]'
 
 re.DOTALL = True
 
