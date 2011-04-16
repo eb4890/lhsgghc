@@ -22,19 +22,19 @@ class LessonController():
   def startregister(self):
     self.registrationstarted = True
     ev = { 'event': 'startregistration' }
-    network.broadcast(ev, 50001)
+    messages.send(ev, 50001)
     for h in self.handsets:
       messages.setlight(h, "#ffffff")
 
   def presetupbuttonpress(self,args):
     if args["button"] in ["button1", "button2", "button3", "button4"]:
-      network.broadcast(args, 50001)
+      messages.send(args, 50001)
     elif args["button"] == "startregistration":
       print "Start registration"
       self.startregister()
     elif args["button"] == "restart":
       ev = {'event': 'restart'}
-      network.broadcast(ev, 50001)
+      messages.send(ev, 50001)
       self.restart()
 
   def livebuttonpress(self,args):
@@ -48,7 +48,7 @@ class LessonController():
       'button':   args['button'],
       'realtime': args['rawtime']
     }
-    network.broadcast(ev, 50001)
+    messages.send(ev, 50001)
 
   def restart(self):
     self.lesson = ""

@@ -1,9 +1,12 @@
 import network
+import json
 
 class ButtonPress ():
-  def __init__(self, args="", dictionary ={}):
+  def __init__(self, args="", dictionary={}):
+
     if (args != ""):
       self.button, self.buzzerid, self.timestamp = args.split(':')
+
     elif dictionary != {}:
 
       self.buzzerid = dictionary[buzzerid]
@@ -15,9 +18,13 @@ class Message():
     self.devid = devid
     self.event = event
 
-def parseMessage(event, data):
+def parse(event, data):
   m = Message(ButtonPress(data).buzzerid, data)
   return m
+
+def send(event, port):
+  msg = json.dumps(event)
+  network.broadcast(msg, port)
 
 def setlight(devid, value):
 
@@ -26,5 +33,4 @@ def setlight(devid, value):
     'devid': devid,
     'state': value,
   }
-  network.broadcast(ev, 50001)
-
+  send(ev, 50001)

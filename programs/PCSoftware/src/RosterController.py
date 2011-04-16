@@ -1,3 +1,5 @@
+import messages
+import network
 import lessonparser as lp
 
 class RosterController():
@@ -34,7 +36,7 @@ class RosterController():
           'devid':   args["devid"],
           'student': currentstudent,
         }
-        network.broadcast(ev, 50000)
+        messages.send(ev, 50000)
         self.rosterpos +=1
         if self.rosterpos >= len(self.rosterlist):
           self.finished = True

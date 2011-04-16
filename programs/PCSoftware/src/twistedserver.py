@@ -6,6 +6,8 @@ from twisted.web import static, resource, server as webserver
 import struct
 import webteacher
 import json
+import messages
+import network
 multicastgroup = "224.0.0.1"
 
 def updateComet(request, message):
@@ -48,19 +50,21 @@ class multicastProtocol(protocol.DatagramProtocol):
     #self.sendMessage("Send me data")
   def stopProtocol(self):
     return
-  def datagramReceived(self,datagram,addr):
-    try:
 
-      #print datagram
-      jsondata = json.loads(datagram.decode("UTF-16"))
-      #event, ata = datagram.split("\n")
-      #message = messages.parseMessage(jsondata["event"], jsondata)
-      if jsondata["event"] in ["setlight", "soundbuzzer"] :
-        self.mainHandler.sendCometMessage(jsondata)
-      print "Found %s %s " % (jsondata["event"] , datagram.decode("UTF-16"))
-    except Exception as err:
+  def datagramReceived(self, payload, addr):
+
+    try:
+      event = json.loads(payload.decode('UTF-8'))
+
+      if event['event'] in ['setlight', 'soundbuzzer']:
+        self.mainHandler.sendCometMessage(event)
+
+      print 'Received event %s %s ' % repr(event)
+
+    except Exception, e:
       log.err()
       return
+
  # def sendMessage(self,message):
   # self.transport.write(message)
 
@@ -80,7 +84,7 @@ class Button(resource.Resource):
       'devid':   self.devid,
       'button':  self.buttonname,
     }
-    network.broadcast(ev, 50000)
+    messages.send(ev, 50000)
     return ''
 
 class StringResource(resource.Resource):
@@ -99,7 +103,7 @@ class LessonResource(resource.Resource):
       'event': 'picklesson',
       'lessonname': name,
     }
-    network.broadcast(ev, 50000)
+    messages.send(ev, 50000)
     return StringResource("")
 
 class IDBuzzerMessage(resource.Resource):
