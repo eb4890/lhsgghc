@@ -1,4 +1,4 @@
-import genericlib
+import network
 
 class ButtonPress ():
   def __init__(self, args="", dictionary ={}):
@@ -16,7 +16,7 @@ class Message():
     self.event = event
 
 def parseMessage(event, data):
-  m =  Message( ButtonPress(data).buzzerid, data)
+  m = Message(ButtonPress(data).buzzerid, data)
   return m
 
 def setlight(devid, value):
@@ -26,5 +26,5 @@ def setlight(devid, value):
     'devid': devid,
     'state': value,
   }
-  gl.broadcast(ev, 50001)
+  network.broadcast(ev, 50001)
 
