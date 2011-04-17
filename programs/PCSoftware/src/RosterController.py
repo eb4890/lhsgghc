@@ -56,7 +56,11 @@ class RosterController(net.MessageListener):
       print e
 
   def unregisterlast(self, args):
-    self.rosterpos -=1
+    if self.rosterpos != 0:
+      currentdevid = self.rosterlist[self.rosterpos]
+      
+      messages.setlight()devid = 
+      self.rosterpos -=1
 
   def rosterfile (self, args):
     self.loadrosterfile (args)
