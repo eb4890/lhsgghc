@@ -39,7 +39,7 @@ class MessageListener():
     except Exception, e:
       print 'Exception handling %s: %s' % (event['event'], repr(e))
 
-  def run():
+  def run(self):
     while True:
       try:
         socks = [self.multisocket]

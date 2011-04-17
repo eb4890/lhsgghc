@@ -1,10 +1,10 @@
 import messages
-import network
+import network as net
 import lessonparser as lp
 
-class RosterController(MessageListener):
-  def __init__(self, filename='', port):
-    MessageListener.__init__(self, port)
+class RosterController(net.MessageListener):
+  def __init__(self, port, filename=''):
+    net.MessageListener.__init__(self, port)
 
     self.restart()
     if filename != '':
@@ -75,5 +75,5 @@ class LessonReader():
 
 if __name__ == '__main__':
   rosterfilename = 'reg.txt'
-  rc = RosterController(rosterfilename, 50001)
+  rc = RosterController(50001, rosterfilename)
   rc.run()

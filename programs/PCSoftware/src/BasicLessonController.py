@@ -1,11 +1,11 @@
-import network
+import network as net
 import messages
 import json
 
 
-class LessonController(MessageListener):
+class LessonController(net.MessageListener):
   def __init__(self, port):
-    MessageListener.__init__(self, port)
+    net.MessageListener.__init__(self, port)
     self.restart()
 
   def restart(self):
