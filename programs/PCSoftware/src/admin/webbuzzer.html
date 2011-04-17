@@ -8,7 +8,7 @@ function gotComet(data, textStatus, jqXHR)
 {
   var da = eval("(" + data + ")");
 
-  alert(da.value);
+  alert(data);
   $.get("comet","", gotComet, "text");
 }
 

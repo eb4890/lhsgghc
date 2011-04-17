@@ -5,13 +5,12 @@ import lessonparser as lp
 class RosterController(net.MessageListener):
   def __init__(self, port, filename=''):
     net.MessageListener.__init__(self, port)
+    self.filename = filename
+    self.restart(None)
 
-    self.restart()
-    if filename != '':
-      self.loadrosterfile(filename)
-
-  def restart(self, args=None):
+  def restart(self, args = None):
     print "(Re)starting"
+    
     self.started = False
     self.rosterpos = 0
     self.finished = False
@@ -24,6 +23,8 @@ class RosterController(net.MessageListener):
       'rosterfile': self.rosterfile,
       'restart': self.restart,
     }
+    if self.filename != '':
+      self.loadrosterfile(self.filename)
 
   def associate(self,args):
     print "In associate"
@@ -50,7 +51,7 @@ class RosterController(net.MessageListener):
         print "%s already in rostermap" % args["devid"]
 
     except Exception, e:
-      print rosterpos
+      print self.rosterpos
       print "Malformed button event"
       print e
 
