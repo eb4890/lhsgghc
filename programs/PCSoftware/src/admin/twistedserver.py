@@ -201,10 +201,6 @@ class protocolGatewayService(service.Service):
     proto = multicastProtocol()
     proto.mainHandler = mbh
     self.udpListeningPort = self.reactor.listenMulticast(50001,proto,listenMultiple=True)
-  def update_data(self,*args):
-    self.data[:] = args
-  def get_data(self):
-    return self.data
 
 application = service.Application('multicastGateway')
 services = service.IServiceCollection(application)
