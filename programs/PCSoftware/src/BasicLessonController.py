@@ -18,8 +18,13 @@ class LessonController(net.MessageListener):
       'rawbuttonpress': self.presetupbuttonpress,
       'startlesson': self.startlesson,
       'startregistration': self.startregistration,
-      'studentmapping': self.studentmapping
+      'studentmapping': self.studentmapping,
+      'foundhandset': self.foundhandset
     }
+
+  def foundhandset(self, args):
+    if not args["devid"] in handsets:
+      self.handsets.append(args["devid"])
 
   def studentmapping(self, args):
     try:
@@ -35,11 +40,12 @@ class LessonController(net.MessageListener):
     self.controller["rawbuttonpress"] = self.livebuttonpress
 
   def startregistration(self):
-    self.registrationstarted = True
-    ev = { 'event': 'startregistration' }
-    messages.send(ev, 50001)
-    for h in self.handsets:
-      messages.setlight(h, "#ffffff")
+    if not self.registrationstarted:
+      self.registrationstarted = True
+      ev = { 'event': 'startregistration' }
+      messages.send(ev, 50001)
+      for h in self.handsets:
+        messages.setlight(h, "#ffffff")
 
   def presetupbuttonpress(self,args):
     if args["button"] in ["button1", "button2", "button3", "button4"]:

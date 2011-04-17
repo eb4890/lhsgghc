@@ -106,12 +106,29 @@ class LessonResource(resource.Resource):
     messages.send(ev, 50000)
     return StringResource("")
 
+class StaticWithFunc(static.File):
+  def __init__(self,filename, function):
+    static.File.__init__(self,filename)
+    self.function =  function
+  def render_GET(self, request):
+    self.function (request)
+    return static.File.render_GET(self, request)
+    
+def createfoundhandset(devid):
+   return lambda x : messages.send(
+   {
+     "event": "foundhandset",
+     "devid": devid
+   },50000)
+
 class IDBuzzerMessage(resource.Resource):
   def __init__(self,mainhandler, devid):
     resource.Resource.__init__(self)
     #self.service = service
     self.devid = devid
-    self.putChild("webbuzzer", static.File("webbuzzer.html"))
+    #self.putChild("webbuzzer", static.File("webbuzzer.html"))
+
+    self.putChild("webbuzzer", StaticWithFunc("webbuzzer.html", createfoundhandset (devid)))
     self.putChild("jquery.js", static.File("jquery.js"))
     self.putChild("site.js", static.File("site.js"))
     #self.putChild("webteacher", static.File("webteacher.html"))
