@@ -59,7 +59,7 @@ class multicastProtocol(protocol.DatagramProtocol):
       if event['event'] in ['setlight', 'soundbuzzer']:
         self.mainHandler.sendCometMessage(event)
 
-      print 'Received event %s %s ' % repr(event)
+      print 'Received event %s ' % repr(event)
 
     except Exception, e:
       log.err()

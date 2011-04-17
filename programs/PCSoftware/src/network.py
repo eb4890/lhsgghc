@@ -29,7 +29,7 @@ class MessageListener():
     print 'Received event: %s' % repr(event)
 
     try:
-      handler = controller[event['event']]
+      handler = self.controller[event['event']]
     except KeyError, e:
       print 'Unknown event %s' % repr(event['event'])
       return
@@ -44,13 +44,13 @@ class MessageListener():
       try:
         socks = [self.multisocket]
         readers, writers, errors = select.select(socks, [], [])
-        msg = readers[0][0].recv(1024)
+        msg = readers[0].recv(1024)
         print 'Recv: %s' % repr(msg)
 
+        self.handle_msg(msg)
       except Exception, e:
         print 'Exception receiving: %s' % repr(e)
 
-      self.handle_msg(msg)
 
 
 def broadcast(msg, port):
