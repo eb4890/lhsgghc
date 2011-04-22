@@ -1,4 +1,16 @@
-1) Make lessons 
+
+Make nextquestion send back display messages
+
+Make in lesson button presses record results in a map.
+
+Make a display for the results of a lesson accessible from the index(make it well formatted)
+
+Make them nicely formatted
+
+Check that display is working for the title (when a lesson is picked by the teacher the title should be displayed in all displays )
+
+
+1) Make LessonParser
 
 2) Make Viewer
 

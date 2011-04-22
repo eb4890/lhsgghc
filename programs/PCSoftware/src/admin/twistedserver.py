@@ -8,14 +8,19 @@ import webteacher
 import json
 import messages
 import network
+import os
+
 multicastgroup = "224.0.0.1"
 
 def updateComet(request, message):
    request.write(json.dumps(message))
-   request.finish()
+   try: 
+     request.finish()
+   except RuntimeError:
+     print "Tried to finish already finished connection, probably timed out"
+          
+ 
 
-def getlessonlist():
-  return ["fred", "bob"]
 
 class TeacherResource (resource.Resource):
   def __init__(self, datafunc):
@@ -24,6 +29,11 @@ class TeacherResource (resource.Resource):
   def render_GET(self, request):
     wt = webteacher.webteacher()
     wt.lessons = self.datafunc()
+    ev ={
+      "event": "foundbasemodule",
+   
+
+    }
     return str(wt)
 
 class TemplateResource(resource.Resource):
@@ -56,7 +66,7 @@ class multicastProtocol(protocol.DatagramProtocol):
     try:
       event = json.loads(payload.decode('UTF-8'))
 
-      if event['event'] in ['setlight', 'soundbuzzer']:
+      if event['event'] in ['setlight', 'soundbuzzer', 'display']:
         self.mainHandler.sendCometMessage(event)
 
       print 'Received event %s ' % repr(event)
@@ -83,6 +93,7 @@ class Button(resource.Resource):
       'rawtime': 'now',
       'devid':   self.devid,
       'button':  self.buttonname,
+     
     }
     messages.send(ev, 50000)
     return ''
@@ -100,8 +111,8 @@ class LessonResource(resource.Resource):
 
   def getChild(self, name, request):
     ev = {
-      'event': 'picklesson',
-      'lessonname': name,
+      'event': 'setlesson',
+      'lesson': name,
     }
     messages.send(ev, 50000)
     return StringResource("")
@@ -115,10 +126,17 @@ class StaticWithFunc(static.File):
     return static.File.render_GET(self, request)
     
 def createfoundhandset(devid):
-   return lambda x : messages.send(
+   return lambda req: messages.send(
    {
      "event": "foundhandset",
-     "devid": devid
+     "devid": devid,
+   },50000)
+
+def createfounddisplay(devid):
+   return lambda req: messages.send(
+   {
+     "event": "founddisplay",
+     "devid": devid,
    },50000)
 
 class IDBuzzerMessage(resource.Resource):
@@ -132,9 +150,9 @@ class IDBuzzerMessage(resource.Resource):
     self.putChild("jquery.js", static.File("jquery.js"))
     self.putChild("site.js", static.File("site.js"))
     #self.putChild("webteacher", static.File("webteacher.html"))
-    self.putChild("webdisplay", static.File("webdisplay.html"))
+    self.putChild("webdisplay", StaticWithFunc("webdisplay.html", createfounddisplay(devid)))
     self.putChild("lesson", LessonResource())
-    self.putChild("webteacher", TeacherResource( getlessonlist))
+    self.putChild("webteacher", TeacherResource( fileops.getlessonlist))
     csh = CometSetupHandler(mainhandler, devid)
     buttons = ["button1", "button2", "button3", "button4","teachernext","startlesson", "startregistration", "restart"]
     for button in buttons:
@@ -159,11 +177,11 @@ class MainBuzzerHandler(resource.Resource):
   def __init__(self,service):
     resource.Resource.__init__(self)
     self.service=service
-    self.putChild("",self)
+    self.putChild("",static.File("index.html"))
     self.idCometRequests = {}
 
 
-  def getChildWithDefault(self,devid,request):
+  def getChild(self,devid,request):
     #name.split("/")
 
     print devid

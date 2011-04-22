@@ -8,9 +8,11 @@ function gotComet(data, textStatus, jqXHR)
 {
   var da = eval("(" + data + ")");
 
-  alert(da.state);
-  
   $.get("comet","", gotComet, "text");
+//  alert(da.state);
+
+//  $("div").attr("background-color", da.state)
+  $("div#led").text(da.state)
 }
 
 
@@ -23,5 +25,7 @@ $.get("comet","", gotComet, "text");
 <a href="#" onclick="jQuery.ajax('button2')">2</a>
 <a href="#" onclick="jQuery.ajax('button3')">3</a>
 <a href="#" onclick="jQuery.ajax('button4')">4</a>
+
+<div id='led'> LED Honest </div>
 </body>
 </html>

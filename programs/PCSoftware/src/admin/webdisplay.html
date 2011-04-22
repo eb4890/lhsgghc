@@ -7,10 +7,17 @@
 function gotComet(data, textStatus, jqXHR)
 {
 
-   var da = eval("(" + data + ")");
-  $("body").val("Hi")
-  alert(data);
   $.get("comet","", gotComet, "text");
+  var da = eval("(" + data + ")");
+//  $("body").val("Hi");
+/*  ans = da.answers;
+  text = da.question + "<ul>";
+  for (a in ans)
+  {
+    text = text + "<li>" + a + "</li>"
+  }
+  text =  text + "</ul>"*/
+  $("div#screen").append(da.text);
 }
 
 
@@ -18,7 +25,8 @@ $.get("comet","", gotComet, "text");
 </script>
 </head>
 <body>
-
+<div id='screen'>
 Lesson not started
+</div>
 </body>
 </html>

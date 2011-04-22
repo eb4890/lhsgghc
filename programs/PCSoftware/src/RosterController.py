@@ -1,6 +1,6 @@
 import messages
 import network as net
-import lessonparser as lp
+import LessonParser as lp
 
 class RosterController(net.MessageListener):
   def __init__(self, port, filename=''):
@@ -55,11 +55,16 @@ class RosterController(net.MessageListener):
       print "Malformed button event"
       print e
 
+  def reversemap (self,student):
+    
+    for k, v in self.rostermap.items():
+      if v == student: 
+        return k
   def unregisterlast(self, args):
     if self.rosterpos != 0:
-      currentdevid = self.rosterlist[self.rosterpos]
-      
-      messages.setlight()devid = 
+      currentstudent = self.rosterlist[self.rosterpos]
+      devid = self.reversemap(currentstudent)    
+      messages.setlight(devid, "#ffffff")  
       self.rosterpos -=1
 
   def rosterfile (self, args):
