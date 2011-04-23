@@ -18,7 +18,7 @@ answer = r"A((nswer)|\.|:)?"
 
 
 #prenumber = r'(\s)*\(?(%s)?(\s*)%s([\.\)\:\,\s\b].*)$'
-prenumber = r'(\s)*\(?(%s)?\s*%s($|([\.\s\:\,].*$))'
+prenumber = r'(\s)*\(?(%s)?\s*%s($|([\.\s\:\,\)].*$))'
 numberings = [
 r"\d+",
 r"i+",
@@ -30,7 +30,7 @@ r"[a-z]"
 # - dashes
 class LessonParser():
   
-  def __init__(self, text):
+  def __init__(self):
     self.questions = []
     self.rest = []
     self.majorre = ""
@@ -177,7 +177,7 @@ class LessonParser():
     return {'title': self.title, 'questions': questions}
 
 
-n = LessonParser(None)
+n = LessonParser()
 
 dicto = n.parselesson('asasjlaj\nQuestion 1 addasdasf\na:\nBlah\nQ\n1)\nb:n\n(\)\nQuestion 2')
 print "Title = %s" % dicto['title']

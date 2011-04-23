@@ -3,10 +3,13 @@
 
 <script>
 
-x = $("a.mod")
+$("a.mod").each(function(index,Element){
+  Element.href("window.location=" + Math.floor(Math.random()*10000) +"/" + Element.id())
 
-for blah in x 
-   x.href = "window.location=rand/x.id" 
+})href()
+
+for (blah in x)
+   blah.href = "window.location=rand/x.id" 
 
 </script>
 

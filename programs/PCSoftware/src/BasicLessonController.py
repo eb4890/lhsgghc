@@ -2,7 +2,7 @@ import network as net
 import messages
 import json
 import fileops
-import LessonParser as lp
+import LessonParser as LP
 
 class LessonController(net.MessageListener):
   def __init__(self, port):
@@ -14,6 +14,7 @@ class LessonController(net.MessageListener):
     self.lesson = None
     self.lessonfile = ""
     self.lessonresponsemap = []
+    self.questionresponsemap = {}
     self.lessonstarted = False
     self.handsets = []
     self.displays = []
@@ -22,23 +23,29 @@ class LessonController(net.MessageListener):
     self.controller = {
       'setlesson': self.setlesson,
       'rawbuttonpress': self.presetupbuttonpress,
-      'startlesson': self.startlesson,
+      #'startlesson': self.startlesson,
       'startregistration': self.startregistration,
       'studentmapping': self.studentmapping,
       'foundhandset': self.foundhandset,
       'founddisplay': self.founddisplay
     }
   
+  def senddisplaymsg(self, text):
+    for d in self.displays:
+      messages.send({"event":"display", "text": text, "devid":d}, 50001)
+
   def setlesson(self,args):
     self.lessonfile = args["lesson"]
+    print self.lessonfile
+    print repr (fileops.getlessonlist())
     if self.lessonfile in fileops.getlessonlist():
-      with open(args["lesson"]) as f:
+      with open("./admin/lessons/"+self.lessonfile) as f:
         text = f.read()
-        lp = lp.LessonParser()
+        lp = LP.LessonParser()
         self.lesson = lp.parselesson(text)
-        messages.send()
+        self.senddisplaymsg(self.lesson["title"]) 
     else:
-      messages.send({"event":"display","text":"Could not find lesson"}, 50001)
+      self.senddisplaymsg ("Could not find lesson") 
         
   def foundhandset(self, args):
     if not args["devid"] in self.handsets:
@@ -56,7 +63,7 @@ class LessonController(net.MessageListener):
       print "Incorrect message format"
       print e
 
-  def startlesson(self, args):
+  def startlesson(self): #, args
     self.lessonstarted = True
     print "Changing eventmap"
     self.controller["rawbuttonpress"] = self.livebuttonpress
@@ -102,25 +109,39 @@ class LessonController(net.MessageListener):
     messages.send(ev, 50001)
 
   def processbutton(self,args):
-    self.lessonresponsemap
+    #Need to make sure that anonid cannot be a devid. Else things will get confused. The perfect is the enemy of the done, though.
+    anonid = "anon" + args["button"]
+    if args["devid"] in idtostudentmap and args["devid"] not in self.questionresponsemap:
+      self.questionresponsemap[args["devid"]] = (args ["button"], args)
+    elif self.lesson:
+      self.questionresponsemap[anonid ] +=1
+    else:
+      self.questionresponsemap[anonid] = 1
 
-  def nextquestion(self, args):
-    self.lessonresponsemap.append({})
-    self.questionnumber = self.questionnumber + 1
+
+  def nextquestion(self):
+    self.lessonresponsemap.append(self.questionresponsemap)
+    self.questionresponsemap = {}
+    (q, ls) = self.lesson["questions"][self.questionnumber]
+    q += "<ul>"
+    for l in ls:
+      q += "<li>" + l + "</li>"
+    q+= "</ul>"
     for d in self.displays:
       ev = {
-       "event":"nextquestion",
-       "question":"",
+       "event":"display",
+       "text": q,
        "devid": d
       }
       messages.send(ev, 50001)
+    self.questionnumber = self.questionnumber + 1
 
   def livebuttonpress(self,args):
     print "Pressingbutton"
-    if (args["buttoname"] in ["button" + str(n) for n in range(1,4)]):
+    if (args["button"] in ["button" + str(n) for n in range(1,4)]):
       self.processbutton()
     elif args["button"] == "teachernext":
-      self.nextquestion():
+      self.nextquestion()
          
     #messages.send(ev, 50001)
 

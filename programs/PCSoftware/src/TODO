@@ -1,11 +1,18 @@
+Write a script to launch them all and deal with config
 
-Make nextquestion send back display messages
+
 
 Make in lesson button presses record results in a map.
 
 Make a display for the results of a lesson accessible from the index(make it well formatted)
 
 Make them nicely formatted
+
+Make it find the correct lesson
+
+Make index.html work (javascript)
+
+Fix the lessons subdirectory so that it picks it up automatically
 
 Check that display is working for the title (when a lesson is picked by the teacher the title should be displayed in all displays )
 
