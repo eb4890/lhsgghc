@@ -4,6 +4,10 @@ import json
 import fileops
 import LessonParser as LP
 
+def getbuttonlist():
+  return (["button1", "button2", "button3", "button4"])
+  #Alternately ["button" + str(n) for n in range(1,4)]
+
 class LessonController(net.MessageListener):
   def __init__(self, port):
     net.MessageListener.__init__(self, port)
@@ -18,7 +22,7 @@ class LessonController(net.MessageListener):
     self.lessonstarted = False
     self.handsets = []
     self.displays = []
-    self.idtostudentmap = {"11":"Jimmy"}
+    self.idtostudentmap = {} 
     self.registrationstarted = False
     self.controller = {
       'setlesson': self.setlesson,
@@ -77,7 +81,7 @@ class LessonController(net.MessageListener):
         messages.setlight(h, "#ffffff")
 
   def presetupbuttonpress(self,args):
-    if args["button"] in ["button1", "button2", "button3", "button4"]:
+    if args["button"] in getbuttonlist():
       messages.send(args, 50001)
     elif args["button"] == "startregistration":
       print "Start registration"
@@ -90,9 +94,9 @@ class LessonController(net.MessageListener):
       self.startlesson()
    
   def processbuttonnet(self,args):
-    if (args["devid"] in idtostudentmap):
+    if (args["devid"] in self.idtostudentmap):
      
-      student = idtostudentmap[args["devid"]]
+      student = self.idtostudentmap[args["devid"]]
       print student
       ev = {
         'event':    'processedbuttonpress',
@@ -111,35 +115,75 @@ class LessonController(net.MessageListener):
   def processbutton(self,args):
     #Need to make sure that anonid cannot be a devid. Else things will get confused. The perfect is the enemy of the done, though.
     anonid = "anon" + args["button"]
-    if args["devid"] in idtostudentmap and args["devid"] not in self.questionresponsemap:
+    if args["devid"] in self.idtostudentmap and args["devid"] not in self.questionresponsemap:
       self.questionresponsemap[args["devid"]] = (args ["button"], args)
-    elif self.lesson:
+    elif anonid in self.questionresponsemap:
       self.questionresponsemap[anonid ] +=1
     else:
       self.questionresponsemap[anonid] = 1
+  
 
+   
+ 
+  def sendreport(self):
+    text = "<table><tr><th>Question</th>"
+    anontext = "<H1>Anonymous Answers<H1>" + text
+    for (k, s) in self.idtostudentmap.items():
+      text += "<th>%s</th>" % s
+    count = 0
+
+    text += "</tr>"
+    for b in getbuttonlist():
+      anontext += "<th>%s</th>" % b
+    anontext += "<tr>" 
+
+    for q in self.lessonresponsemap:
+      (qtext, ls) = self.lesson["questions"][count]
+      questiontext = "<tr><td>%s</td>" % qtext
+      text+= questiontext
+      anontext += questiontext
+      for (k, s) in self.idtostudentmap.items():
+        if k in q:
+          (devid, args) =  q[k]
+          ans = args["button"]
+        else: 
+          ans = "No answer"
+        text +="<td>%s</td>" % ans
+      for b in getbuttonlist():
+        anonbutton = "anon" +b 
+        if anonbutton in q:
+          count  = q["anon"+b]
+        else: 
+          count  = 0
+        anontext += "<td>%s</td>" % count
+      text+="</tr>"
+      anontext+="</tr>"
+      count +=1
+
+    text += "</table>"
+    anontext+= "</table>"
+    
+
+    self.senddisplaymsg(text + anontext)
 
   def nextquestion(self):
+    
     self.lessonresponsemap.append(self.questionresponsemap)
     self.questionresponsemap = {}
-    (q, ls) = self.lesson["questions"][self.questionnumber]
-    q += "<ul>"
-    for l in ls:
-      q += "<li>" + l + "</li>"
-    q+= "</ul>"
-    for d in self.displays:
-      ev = {
-       "event":"display",
-       "text": q,
-       "devid": d
-      }
-      messages.send(ev, 50001)
-    self.questionnumber = self.questionnumber + 1
-
+    if self.questionnumber < len (self.lesson["questions"]):
+      (q, ls) = self.lesson["questions"][self.questionnumber]
+      q += "<ul>"
+      for l in ls:
+        q += "<li>" + l + "</li>"
+      q+= "</ul>"
+      self.senddisplaymsg(q)
+      self.questionnumber = self.questionnumber + 1
+    else:
+      self.sendreport()
   def livebuttonpress(self,args):
     print "Pressingbutton"
-    if (args["button"] in ["button" + str(n) for n in range(1,4)]):
-      self.processbutton()
+    if (args["button"] in getbuttonlist()):
+      self.processbutton(args)
     elif args["button"] == "teachernext":
       self.nextquestion()
          

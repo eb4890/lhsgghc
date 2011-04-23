@@ -2,8 +2,14 @@ import socket
 import select
 import struct
 import json
-
+import sys
+import traceback as tb
 MCAST_GRP = '224.1.1.1'
+
+
+def printtraceback():
+  (typ, value,traceback) = sys.exc_info()
+  tb.print_tb(traceback)
 
 
 def multisocket(port):
@@ -38,7 +44,8 @@ class MessageListener():
       handler(event)
     except Exception, e:
       print 'Exception handling %s: %s' % (event['event'], repr(e))
-
+      printtraceback()
+      
   def run(self):
     while True:
       try:
@@ -50,6 +57,7 @@ class MessageListener():
         self.handle_msg(msg)
       except Exception, e:
         print 'Exception receiving: %s' % repr(e)
+        printtraceback()
 
 
 
@@ -66,3 +74,4 @@ def broadcast(msg, port):
 
   except Exception, e:
     print 'Exception sending: %s' % repr(e)
+    printtraceback()

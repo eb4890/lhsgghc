@@ -92,12 +92,13 @@ class LessonParser():
         answer = "\n".join([answer, l])
         #print "answer %s" % answer
       else:
-        
+        print "Count = %d, self.rest = %d"% (count, len(self.rest))        
         if count <= len (self.rest):
-          
-          self.rest = self.rest[(count-1):]
+         
+          self.rest = self.rest[(count):]  
         else:
           self.rest = []
+        #print repr(self.rest)
         return answer
 
       count = count +1
@@ -122,8 +123,9 @@ class LessonParser():
           return question      
         else:
           question = "\n".join([question, l ])
-      elif self.newanswer():
+      elif self.newanswer(l):
         self.rest = self.rest[count:]
+        print repr (self.rest)
         return question
       else:
         question = "\n".join([question, l ])
@@ -155,12 +157,13 @@ class LessonParser():
       a = self.parseanswer()
       #print "pqt"
       answers.append(a)
-     # print repr (a)
+      #print repr (a)
       #print repr (self.rest)
+      #if self.rest != []:
+       
+       #  self.rest = self.rest[1:]
       if self.rest != []:
-         self.rest = self.rest[1:]
-         if self.rest != []:
-           notquestionnext = not self.questionnext(self.rest[0]) 
+        notquestionnext = not self.questionnext(self.rest[0]) 
     return (question, answers)    
 
  
@@ -178,11 +181,13 @@ class LessonParser():
 
 
 n = LessonParser()
-
-dicto = n.parselesson('asasjlaj\nQuestion 1 addasdasf\na:\nBlah\nQ\n1)\nb:n\n(\)\nQuestion 2')
-print "Title = %s" % dicto['title']
-for (q, answers) in dicto['questions']:
-  print "Question found: '%s' with answers:" % q
-  for a in answers:
-    print "\tAnswer found '%s'" % a 
+with open("admin/lessons/lesson1") as f:
+  text = f.read()
+  print text
+  dicto = n.parselesson(text)
+  print "Title = %s" % dicto['title']
+  for (q, answers) in dicto['questions']:
+    print "Question found: '%s' with answers:" % q
+    for a in answers:
+      print "\tAnswer found '%s'" % a 
 #print "leftover = %s" % repr(dicto['questions']) 
