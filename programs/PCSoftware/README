@@ -2,6 +2,8 @@ Instructions
 
 Run 1 of each of
 
+Lessons are looked for in "home"/.buzzers/lessons so that is where you'll need to put them for now before I do an install script
+
 #python Webvirtualcontrollers.py
 python RegisterController.py
 python basiclessoncontroller.py

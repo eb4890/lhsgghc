@@ -130,7 +130,7 @@ class LessonController(net.MessageListener):
     anontext = "<H1>Anonymous Answers<H1>" + text
     for (k, s) in self.idtostudentmap.items():
       text += "<th>%s</th>" % s
-    count = 0
+    qcount = 0
 
     text += "</tr>"
     for b in getbuttonlist():
@@ -138,7 +138,7 @@ class LessonController(net.MessageListener):
     anontext += "<tr>" 
 
     for q in self.lessonresponsemap:
-      (qtext, ls) = self.lesson["questions"][count]
+      (qtext, ls) = self.lesson["questions"][qcount]
       questiontext = "<tr><td>%s</td>" % qtext
       text+= questiontext
       anontext += questiontext
@@ -152,13 +152,13 @@ class LessonController(net.MessageListener):
       for b in getbuttonlist():
         anonbutton = "anon" +b 
         if anonbutton in q:
-          count  = q["anon"+b]
+          acount  = q["anon"+b]
         else: 
-          count  = 0
-        anontext += "<td>%s</td>" % count
+          acount  = 0
+        anontext += "<td>%s</td>" % acount
       text+="</tr>"
       anontext+="</tr>"
-      count +=1
+      qcount +=1
 
     text += "</table>"
     anontext+= "</table>"
@@ -168,8 +168,10 @@ class LessonController(net.MessageListener):
 
   def nextquestion(self):
     
-    self.lessonresponsemap.append(self.questionresponsemap)
-    self.questionresponsemap = {}
+    if self.questionnumber != 0:
+      self.lessonresponsemap.append(self.questionresponsemap)
+      self.questionresponsemap = {}
+    print "lesson response map is %d long" % len(self.lessonresponsemap)
     if self.questionnumber < len (self.lesson["questions"]):
       (q, ls) = self.lesson["questions"][self.questionnumber]
       q += "<ul>"
