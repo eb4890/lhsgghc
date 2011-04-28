@@ -13,6 +13,7 @@ function gotComet(data, textStatus, jqXHR)
 
 //  $("div").attr("background-color", da.state)
   $("div#led").text(da.state)
+  $("p#pled").attr("style", "color:"+da.state)
 }
 
 
@@ -21,11 +22,12 @@ $.get("comet","", gotComet, "text");
 </head>
 <body>
 
-<a href="#" onclick="jQuery.ajax('button1')">1</a>
-<a href="#" onclick="jQuery.ajax('button2')">2</a>
-<a href="#" onclick="jQuery.ajax('button3')">3</a>
-<a href="#" onclick="jQuery.ajax('button4')">4</a>
+&nbsp;&nbsp;&nbsp;<a href="#" onclick="jQuery.ajax('button1')"><img src="button.png" ></a> </br>
+<a href="#" onclick="jQuery.ajax('button2')"><img src="button.png" ></a>
+<a href="#" onclick="jQuery.ajax('button3')"><img src="button.png" ></a> </br>
+&nbsp;&nbsp;&nbsp;<a href="#" onclick="jQuery.ajax('button4')"><img src="button.png" ></a>
 
-<div id='led'> LED Honest </div>
+<div id='led'> Color </div>
+<div> <p id='pled'>LED Honest</p> </div>
 </body>
 </html>

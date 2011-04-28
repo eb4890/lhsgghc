@@ -1,15 +1,31 @@
 Instructions
 
+This is simpy a proof of concept. Many games are possible, it will just be a matter of adding in different software. Getting feedback on how the system would be used is important.
+
 Run 1 of each of
 
-Lessons are looked for in "home"/.buzzers/lessons so that is where you'll need to put them for now before I do an install script
 
 #python Webvirtualcontrollers.py
 python RegisterController.py
 python basiclessoncontroller.py
-*Work in progress* twistd -noy twistedserver.py
+twistd -noy twistedserver.py
 
 Navigate to
+
+localhost:9001/
+
+This has three options.
+
+Make a buzzer
+-- This creates a buzzer that is used for testing purposes. There is also a virtual LED that displays what the real LED should do.
+
+Make a teacher controller
+-- This is the controls just for the teacher. You can start a lesson, select a new 
+
+Make a display
+
+-- This forms a webpage that acts as a display for the lesson. It updates automatically 
+
 
 localhost:9001/randomid/webbuzzer
 "ditto"/webteacher (unimplemented)

@@ -9,9 +9,7 @@
 </head>
 <body>
 <a href="#" onclick="jQuery.ajax('startregistration')">Start registration </a>
-<a href="#" onclick="jQuery.ajax('teachernext')">Next Question</a> <br/>
 <a href="#" onclick= "jQuery.ajax('restart')"> Restart </a><br/>
-<a href="#" onclick="jQuery.ajax('startlesson')">Start Lesson</a></br>
 
 <select id="lesson">
 
@@ -21,7 +19,8 @@
 
 #end for
 </select>
-<a href="#" onclick="setlesson()"">Set lesson</a>
-<a href="#" onclick="jQuery.ajax('button/4/')">4</a>
+<a href="#" onclick="setlesson()"">Set lesson</a></br>
+<a href="#" onclick="jQuery.ajax('startlesson')">Start Lesson</a></br>
+<a href="#" onclick="jQuery.ajax('teachernext')">Next Question</a> <br/>
 </body>
 </html>

@@ -1,6 +1,10 @@
 import os
 
+def savelesson(text):
+  os.path.expanduser("~/.buzzers/lessons")
+
 def getlessonlist():
+  path = os.path.expanduser("~/.buzzers")
   dirs = os.walk(os.path.expanduser("~/.buzzers/lessons"))
 #"/home/loadquo/files/lhsgghc/Programs/PCSoftware/src/admin/lessons")
   lessons = []

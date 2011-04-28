@@ -1,15 +1,20 @@
 <html>
 <head>
+<script type="text/javascript" src ="/jquery.js"></script>
 
-<script>
+<script type="text/javascript">
+
+function randomiseurls(){
 
 $("a.mod").each(function(index,Element){
-  Element.href("window.location=" + Math.floor(Math.random()*10000) +"/" + Element.id())
+  //alert("Blah")
+  $(Element).attr("href", window.location + Math.floor(Math.random()*10000) +"/" + $(Element).attr("id") )
 
-})href()
+});
+}
 
-for (blah in x)
-   blah.href = "window.location=rand/x.id" 
+$(document).ready( randomiseurls );
+
 
 </script>
 
@@ -21,11 +26,11 @@ Welcome to the Buzzer System
 Here are some options
 
 <br/>
-<a id="webbuzzer" class="mod" href="">Make a virtual buzzer</a>
+<a id="webbuzzer" class="mod" href="" target="_blank" onClick="randomiseurls()" >Make a virtual buzzer</a>
 <br/>
-<a id="webdisplay" class="mod" href="">Make a display for the lesson</a>
+<a id="webdisplay" class="mod" href="" target="_blank"  onClick="randomiseurls()" >Make a display for the lesson</a>
 <br/>
-<a id="webteacher" class="mod" href="">Make a virtual teacher controller</a>
+<a id="webteacher" class="mod" href="" target="_blank" onClick="randomiseurls()" >Make a virtual teacher controller</a>
 </body>
 
 

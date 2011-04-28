@@ -68,17 +68,23 @@ class LessonController(net.MessageListener):
       print e
 
   def startlesson(self): #, args
-    self.lessonstarted = True
-    print "Changing eventmap"
-    self.controller["rawbuttonpress"] = self.livebuttonpress
+    
+    if self.lesson !=None: 
+      self.lessonstarted = True
+      print "Changing eventmap"
+      self.controller["rawbuttonpress"] = self.livebuttonpress
+      self.nextquestion()
+    else:
+      self.senddisplaymsg("Lesson not selected yet")
+      # Make infinite mode here
 
   def startregistration(self):
-    if not self.registrationstarted:
-      self.registrationstarted = True
-      ev = { 'event': 'startregistration' }
-      messages.send(ev, 50001)
-      for h in self.handsets:
-        messages.setlight(h, "#ffffff")
+    self.registrationstarted = True
+    ev = { 'event': 'startregistration' }
+    messages.send(ev, 50001)
+    for h in self.handsets:
+      messages.setlight(h, "#ffffff")
+    
 
   def presetupbuttonpress(self,args):
     if args["button"] in getbuttonlist():
@@ -115,7 +121,8 @@ class LessonController(net.MessageListener):
   def processbutton(self,args):
     #Need to make sure that anonid cannot be a devid. Else things will get confused. The perfect is the enemy of the done, though.
     anonid = "anon" + args["button"]
-    if args["devid"] in self.idtostudentmap and args["devid"] not in self.questionresponsemap:
+    if args[""] 
+    elif args["devid"] in self.idtostudentmap and args["devid"] not in self.questionresponsemap:
       self.questionresponsemap[args["devid"]] = (args ["button"], args)
     elif anonid in self.questionresponsemap:
       self.questionresponsemap[anonid ] +=1

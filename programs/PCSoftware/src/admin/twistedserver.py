@@ -150,6 +150,7 @@ class IDBuzzerMessage(resource.Resource):
     self.putChild("webbuzzer", StaticWithFunc("webbuzzer.html", createfoundhandset (devid)))
     self.putChild("jquery.js", static.File("jquery.js"))
     self.putChild("site.js", static.File("site.js"))
+    self.putChild("button.png", static.File("button.png"))
     #self.putChild("webteacher", static.File("webteacher.html"))
     self.putChild("webdisplay", StaticWithFunc("webdisplay.html", createfounddisplay(devid)))
     self.putChild("lesson", LessonResource())
@@ -162,6 +163,15 @@ class IDBuzzerMessage(resource.Resource):
 
   def render_GET(self, request):
     return """<html><head></head><body><div>Information about device ID X goes here</div></body></html>"""
+
+
+#class PostHandler(resource.Resource):
+
+ # def __init__(self):
+  #  resource.Resource.__init__(self)
+    
+  #def render_POST(self.request):
+   # fileops.save
 
 class CometSetupHandler(resource.Resource):
   def __init__(self, mainhandler, devid):
@@ -179,6 +189,7 @@ class MainBuzzerHandler(resource.Resource):
     resource.Resource.__init__(self)
     self.service=service
     self.putChild("",static.File("index.html"))
+    self.putChild("jquery.js", static.File("jquery.js"))
     self.idCometRequests = {}
 
 
