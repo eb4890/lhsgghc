@@ -1,13 +1,13 @@
 import messages
-import network
+import network as net
 import serial
 import json
+import select
 
-
-class SerialController(MessageListener):
+class SerialController(net.MessageListener):
 
   def __init__(self, port, serialPort):
-    MessageListener.__init__(self, port)
+    net.MessageListener.__init__(self, port)
     self.serial = serial.Serial(serialPort)
     valid_msgs = [
       'setlight',
@@ -21,10 +21,14 @@ class SerialController(MessageListener):
   def serial_read(self):
     msg = self.serial.readline()
     print 'Received on serial: %s' % repr(msg)
-    self.handle_msg(msg)
+    self.send_msg(msg)
 
-  def serial_write(self):
+  def send_msg(self,msg):
+    messages.send(msg,50000) 
+
+  def serial_write(self,msg):
     self.writeable = True
+    self.handle_mesg(msg)
     print 'Serial is ready'
 
   def serial_error(self):
@@ -55,13 +59,13 @@ class SerialController(MessageListener):
 
     while True:
       try:
-        socks = [self.multisocket, self.serialsocket]
+        socks = [self.multisocket, self.serial]
 
         ready = select.select(socks, [], [])
         handlers = self.ready_handlers()
 
         for h, r in zip(handlers, ready):
-          if r in h:
+          if h in r:
 
             try:
               h[r]()
@@ -69,10 +73,14 @@ class SerialController(MessageListener):
               pass
             except Exception, e:
               print 'Exception handling: %s' % repr(e)
+              net.printtraceback()
+          else: 
+            pass  
 
       except Exception, e:
         print 'Exception: %s' % repr(e)
+        net.printtraceback()
 
 if __name__ == '__main__':
-  sc = SerialController(50002, '/dev/ttyUSB0')
+  sc = SerialController(50002, '/dev/ttyUSB1')
   sc.run()
